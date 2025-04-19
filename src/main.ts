@@ -7,11 +7,11 @@ import { ConfigService } from '@nestjs/config';
 import { SeedService } from './seed.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  console.log('Starting the application...'); // Add this to check if the file is executed
 
+  const app = await NestFactory.create(AppModule);  
   // Use the built-in Logger
-  const logger = new Logger('Bootstrap');
-
+  const logger = new Logger('Bootstrap');  
   // Global Exception Filter
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -34,7 +34,7 @@ async function bootstrap() {
 
   // Get port from .env
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 3000); // Default to 3000 if not specified
+  const port = configService.get<number>('APP_PORT', 3000); // Default to 3000 if not specified
   await app.listen(port);
   logger.log(`Application is running on: ${await app.getUrl()}`);
 }
