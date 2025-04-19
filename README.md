@@ -23,3 +23,6 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+
+## seed data
+- Uncomment line 32,33 from main.ts then recompile project.
