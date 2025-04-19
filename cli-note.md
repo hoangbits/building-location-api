@@ -22,3 +22,10 @@ UPDATE src/app.module.ts (1024 bytes)
 ➜  building-location-api git:(main) ✗ nest g module seed --flat --no-spec
 CREATE src/seed.module.ts (81 bytes)
 UPDATE src/app.module.ts (1084 bytes)
+
+
+
+## Db connection note
+1. PG 15issue: GRANT ALL ON SCHEMA public TO postgres;
+2. using 6543 transaction pool
+3. set serets on fly.io

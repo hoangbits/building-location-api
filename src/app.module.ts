@@ -11,7 +11,6 @@ import { SeedModule } from './seed.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) =>  {
-        
         return {
           type: 'postgres',
           host: configService.get<string>('DB_HOST'),
@@ -21,6 +20,13 @@ import { SeedModule } from './seed.module';
           database: configService.get<string>('DB_NAME'),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: true, // Set to false in production
+          // consider enable this for prod.
+          // ssl: true,
+          extra: {
+            ssl: {
+              rejectUnauthorized: false
+            }
+          }
         }
       } 
         ,
