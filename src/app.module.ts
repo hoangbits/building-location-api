@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocationModule } from './location/location.module';
+import { SeedService } from './seed.service';
+import { SeedModule } from './seed.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { LocationModule } from './location/location.module';
       inject: [ConfigService],
     }),
     LocationModule,
+    SeedModule,
   ],
+  providers: [SeedService],
 })
 export class AppModule {}

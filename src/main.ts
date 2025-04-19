@@ -4,7 +4,7 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ConfigService } from '@nestjs/config';
-import { LocationService } from './location/location.service';
+import { SeedService } from './seed.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,9 +27,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Seed the database
-  const locationService = app.get(LocationService);
-  await locationService.seedData();
+  // Seed the database using SeedService
+  // uncomment the following lines to enable seeding
+  // const seedService = app.get(SeedService);
+  // await seedService.seedData();
 
   // Get port from .env
   const configService = app.get(ConfigService);
