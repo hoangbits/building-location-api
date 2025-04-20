@@ -26,7 +26,8 @@ export class Location {
   @ManyToOne(() => Location, (location) => location.children, { nullable: true })
   @JoinColumn({ name: 'parentId' })
   @ApiProperty({ description: 'Parent location (if any)' })
-  parent: Location;
+  parent: Location | null;
+
 
   @Column({ nullable: true })
   parentId: number;

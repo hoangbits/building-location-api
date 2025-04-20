@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Location } from './location.entity';
 import { CreateLocationDto } from './dto/create-location.dto';
+import { UpdateLocationDto } from './dto/update-location.dto';
 
 @Injectable()
 export class LocationService {
@@ -42,5 +43,54 @@ export class LocationService {
       throw new NotFoundException(`Location with ID ${id} not found`);
     }
     return location;
+  }
+
+  async update(id: number, updateLocationDto: UpdateLocationDto): Promise<Location> {
+    this.logger.log(`Updating location with ID ${id}`);
+
+    const location = await this.findOne(id);
+
+    if (updateLocationDto.parentId !== undefined) {
+      if (updateLocationDto.parentId === null) {
+        // still no parent then nilify it.
+        location.parent = null;
+      } else {
+        const parent = await this.locationRepository.findOne({ where: { id: updateLocationDto.parentId } });
+        if (!parent) {
+          this.logger.error(`Parent location with ID ${updateLocationDto.parentId} not found`);
+          throw new NotFoundException(`Parent location with ID ${updateLocationDto.parentId} not found`);
+        }
+        if (parent.id === location.id) {
+          this.logger.error(`Location with ID ${id} cannot be its own parent`);
+          throw new NotFoundException(`Location cannot be its own parent`);
+        }
+        location.parent = parent;
+      }
+    }
+
+    if (updateLocationDto.building !== undefined) location.building = updateLocationDto.building;
+    if (updateLocationDto.locationName !== undefined) location.locationName = updateLocationDto.locationName;
+    if (updateLocationDto.locationNumber !== undefined) location.locationNumber = updateLocationDto.locationNumber;
+    if (updateLocationDto.area !== undefined) location.area = updateLocationDto.area;
+
+    return this.locationRepository.save(location);
+  }
+
+  async delete(id: number): Promise<void> {
+    this.logger.log(`Deleting location with ID ${id}`);
+
+    const location = await this.findOne(id);
+
+    // If the location has children, set their parent to null
+    if (location.children && location.children.length > 0) {
+      this.logger.log(`Setting parent to null for ${location.children.length} children of location ID ${id}`);
+      for (const child of location.children) {
+        child.parent = null;
+        await this.locationRepository.save(child);
+      }
+    }
+
+    await this.locationRepository.remove(location);
+    this.logger.log(`Location with ID ${id} deleted successfully`);
   }
 }
