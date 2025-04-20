@@ -57,6 +57,18 @@
     }
   ```
 
+## Sample Logging
+
+![alt text](image-3.png)
+```
+[Nest] 11628  - 04/20/2025, 3:06:44 PM     LOG [LocationController] Received request to fetch all locations with pagination
+[Nest] 11628  - 04/20/2025, 3:06:44 PM     LOG [LocationService] Fetching locations with pagination - page: 1, per_page: 2
+[Nest] 11628  - 04/20/2025, 3:07:05 PM     LOG [LocationController] Received request to fetch all locations with pagination
+[Nest] 11628  - 04/20/2025, 3:07:05 PM     LOG [LocationService] Fetching locations with pagination - page: 1, per_page: 3
+[Nest] 11628  - 04/20/2025, 3:07:13 PM     LOG [LocationController] Received request to fetch all locations with pagination
+[Nest] 11628  - 04/20/2025, 3:07:13 PM     LOG [LocationService] Fetching locations with pagination - page: 1, per_page: 10
+
+```
 ## Project setup
 
 ```bash
