@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, Logger, Query } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { Location } from './location.entity';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import { PaginationDto } from './dto/pagination.dto';
 
 @ApiTags('locations')
 @Controller('locations')
@@ -22,12 +23,37 @@ export class LocationController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all locations' })
-  @ApiResponse({ status: 200, description: 'List of locations.', type: [Location] })
-  async findAll(): Promise<Location[]> {
-    this.logger.log('Received request to fetch all locations');
-    return this.locationService.findAll();
+  @ApiOperation({ 
+    summary: 'Get all locations with pagination', 
+    description: 'Fetches a paginated list of locations (excluding soft-deleted ones).'
+  })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (1-based)', example: 1 })
+  @ApiQuery({ name: 'per_page', required: false, type: Number, description: 'Items per page', example: 10 })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Paginated list of locations.', 
+    type: Object, 
+    schema: {
+      type: 'object',
+      properties: {
+        data: { type: 'array', items: { $ref: '#/components/schemas/Location' } },
+        total: { type: 'number', example: 15 },
+        page: { type: 'number', example: 1 },
+        per_page: { type: 'number', example: 10 },
+      },
+    },
+  })
+  async findAll(@Query() paginationDto: PaginationDto): Promise<{
+    data: Location[];
+    total: number;
+    page: number;
+    per_page: number;
+  }> {
+    this.logger.log('Received request to fetch all locations with pagination');
+    return this.locationService.findAll(paginationDto);
   }
+
+
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a location by ID' })
@@ -37,6 +63,7 @@ export class LocationController {
     this.logger.log(`Received request to fetch location with ID ${id}`);
     return this.locationService.findOne(id);
   }
+
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a location by ID' })

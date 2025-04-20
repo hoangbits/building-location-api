@@ -4,7 +4,7 @@ import { IsNull, Repository } from 'typeorm';
 import { Location } from './location.entity';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-
+import { PaginationDto } from './dto/pagination.dto';
 @Injectable()
 export class LocationService {
   private readonly logger = new Logger(LocationService.name);
@@ -41,16 +41,36 @@ export class LocationService {
     return this.locationRepository.save(location);
   }
 
-  /**
-   * Retrieves all locations, excluding soft-deleted ones.
+    /**
+   * Retrieves all locations with pagination, excluding soft-deleted ones.
    * Includes parent and children relations.
+   * Returns the locations along with pagination metadata.
    */
-  async findAll(): Promise<Location[]> {
-    this.logger.log('Fetching all locations');
-    return this.locationRepository.find({
+  async findAll(paginationDto: PaginationDto): Promise<{
+    data: Location[];
+    total: number;
+    page: number;
+    per_page: number;
+  }> {
+    const { page, per_page } = paginationDto;
+
+    this.logger.log(`Fetching locations with pagination - page: ${page}, per_page: ${per_page}`);
+
+    const skip = (page - 1) * per_page; // Calculate the number of items to skip
+
+    const [locations, total] = await this.locationRepository.findAndCount({
       where: { deletedAt: IsNull() },
       relations: ['parent', 'children'],
+      skip,
+      take: per_page,
     });
+
+    return {
+      data: locations,
+      total,
+      page,
+      per_page,
+    };
   }
 
   /**
