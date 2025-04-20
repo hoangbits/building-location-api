@@ -5,61 +5,56 @@
 
 [https://building-location-api.fly.dev/api#/](https://building-location-api.fly.dev/api#/)
 
-### Sample Tree Data 
-
-![alt text](image.png)
-  Req: 
+### Sample Tree Data: 
+- Master room id: 5 is a child of Building A
+- Master room id: 5 is a parent of 2 children: 2 Meeting rooms.
+![alt text](image-1.png)
+  Request: 
   ```
-  curl -X 'GET' \
-  'https://building-location-api.fly.dev/locations/2' \
-  -H 'accept: application/json' 
+    curl -X 'GET' \
+    'https://building-location-api.fly.dev/locations/5' \
+    -H 'accept: application/json'
   ```
   Response body:
   ```
     {
-    "id": 2,
-    "building": "A",
-    "locationName": "Level 1",
-    "locationNumber": "A-01",
-    "area": 100.92,
-    "parent": null,
-    "parentId": null,
-    "children": [
-            {
-            "id": 3,
-            "building": "A",
-            "locationName": "Lobby Level1",
-            "locationNumber": "A-01-Lobby",
-            "area": 80.62,
-            "parentId": 2
-            },
-            {
-            "id": 4,
-            "building": "A",
-            "locationName": "Corridor Level 1",
-            "locationNumber": "A-01-Corridor",
-            "area": 30.2,
-            "parentId": 2
-            },
-            {
-            "id": 5,
-            "building": "A",
-            "locationName": "Master Room",
-            "locationNumber": "A-01-01",
-            "area": 50.11,
-            "parentId": 2
-            },
-            {
-            "id": 8,
-            "building": "A",
-            "locationName": "Toilet Level 1",
-            "locationNumber": "A-01-02",
-            "area": 30.2,
-            "parentId": 2
-            }
-        ]
-    }  
-
+      "id": 5,
+      "building": "A",
+      "locationName": "Master Room",
+      "locationNumber": "A-01-01",
+      "area": 50.11,
+      "parent": {
+        "id": 2,
+        "building": "A",
+        "locationName": "Level 1",
+        "locationNumber": "A-01",
+        "area": 100.92,
+        "parentId": null,
+        "deletedAt": null
+      },
+      "parentId": 2,
+      "children": [
+        {
+          "id": 6,
+          "building": "A",
+          "locationName": "Meeting Room 1",
+          "locationNumber": "A-01-01-M1",
+          "area": 20.11,
+          "parentId": 5,
+          "deletedAt": null
+        },
+        {
+          "id": 7,
+          "building": "A",
+          "locationName": "Meeting Room 2",
+          "locationNumber": "A-01-01-M2",
+          "area": 20.11,
+          "parentId": 5,
+          "deletedAt": null
+        }
+      ],
+      "deletedAt": null
+    }
   ```
 
 ## Project setup
